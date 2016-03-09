@@ -1,0 +1,11 @@
+target
+.project
+.classpath
+.settings
+.cache
+.cache-main
+.README.md.html
+.worksheet
+.tmpBin
+*.sc
+META-INF/
