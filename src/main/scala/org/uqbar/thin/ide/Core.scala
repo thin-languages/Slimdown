@@ -1,8 +1,6 @@
 package org.uqbar.thin.ide
 
-import scala.util.Try
 import java.util.jar.JarFile
-import java.net.URL
 import scala.reflect.internal.util.ScalaClassLoader
 import scala.collection.JavaConversions._
 import java.util.jar.JarEntry

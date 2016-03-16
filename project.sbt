@@ -8,3 +8,5 @@ lazy val proyecto = FDProject(
 
 unmanagedSourceDirectories in Compile := (scalaSource in Compile).value :: Nil	
 unmanagedSourceDirectories in Test := (scalaSource in Test).value :: Nil
+
+libraryDependencies += "org.scala-lang" % "scala-reflect" % "2.11.7"
