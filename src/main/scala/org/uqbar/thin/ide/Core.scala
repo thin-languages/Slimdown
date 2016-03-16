@@ -8,20 +8,27 @@ import java.util.jar.JarEntry
 
 object Core extends App{
   
-  val paths = io.Source.fromFile("config.txt").getLines
-  
   def ejecutarPlugin:Class[_]=>Unit = { x => print(x)
                                    print("\n") 
                                  }
+
+  val paths = io.Source.fromFile("config.txt").getLines
   
+  implicit class JarClass(entry:JarEntry){
+    val (className,typeSuffix) = {
+      val entryName = entry.getName.replace('/','.')
+      entryName.splitAt( entryName.lastIndexOf(".class"))
+    }
+    def isClass:Boolean = !entry.isDirectory() && (typeSuffix equals ".class")
+  }
+    
   val classes = for{path <- paths
       file <- new java.io.File(path).listFiles if file.getName endsWith ".jar"
       jarContents = new JarFile(file).entries
-      e<-jarContents
-      eName = e.getName
-      if !e.isDirectory() && eName.endsWith(".class")
-      className = eName.dropRight(6).replace('/','.')
-      }yield{getClass.getClassLoader.loadClass(className)}
+      entry<-jarContents
+      if entry.isClass
+      }yield{getClass.getClassLoader.loadClass(entry.className)}
        
   classes.foreach { ejecutarPlugin }
 }
+
