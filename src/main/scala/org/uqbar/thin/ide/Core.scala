@@ -12,7 +12,7 @@ object Core extends App{
   
   val paths = io.Source.fromFile("config.txt").getLines
   
-  def ejecutarPlugin:Any=>Unit = { x => print(x)
+  def ejecutarPlugin:Class[_]=>Unit = { x => print(x)
                                    print("\n") 
                                  }
   
