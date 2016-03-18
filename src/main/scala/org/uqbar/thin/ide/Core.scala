@@ -53,8 +53,8 @@ object Loader{
 case class Loader(files:Seq[File]){
   def addFile(newFile:File) = copy(files = files :+ newFile)
   def addFiles(newFiles:Seq[File]) = copy(files = files ++ newFiles)
-  def archivos = files map {_.toURI.toURL}
-  def classLoader = new ScalaClassLoader.URLClassLoader(files map {_.toURI.toURL},getClass.getClassLoader)
+  def fileURLs = files map {_.toURI.toURL}
+  def classLoader = new ScalaClassLoader.URLClassLoader(fileURLs,getClass.getClassLoader)
   def loadClass(className:String) = classLoader.loadClass(className)
 }
  
