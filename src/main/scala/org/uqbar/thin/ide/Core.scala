@@ -30,13 +30,13 @@ object Core extends App{
     
   val classes = for{path <- paths
       file <- SourceFinder(path)
-      classLoader = new ScalaClassLoader.URLClassLoader(List(file.toURI.toURL),getClass.getClassLoader)
+      classLoader = Loader(file)
       jarContents = new JarFile(file).entries
       entry<-jarContents
       if entry.isClass
       }yield{classLoader.loadClass(entry.className)}
-  classes.foreach { executePlugin }
-  
+ 
+      classes.foreach{ executePlugin }
 }
 
 object SourceFinder{
@@ -44,5 +44,17 @@ object SourceFinder{
     case path if isLocalDirectory(path) => new File(path).listFiles.filter(_.getName.endsWith(".jar")).toSeq
     case _ => List()
   }
-  def isLocalDirectory(path:String) = path.startsWith("C")
+  def isLocalDirectory(path:String) = true //placeholder
 }
+
+object Loader{
+  def apply(file:File) = new Loader(List(file))
+}
+case class Loader(files:Seq[File]){
+  def addFile(newFile:File) = copy(files = files :+ newFile)
+  def addFiles(newFiles:Seq[File]) = copy(files = files ++ newFiles)
+  def archivos = files map {_.toURI.toURL}
+  def classLoader = new ScalaClassLoader.URLClassLoader(files map {_.toURI.toURL},getClass.getClassLoader)
+  def loadClass(className:String) = classLoader.loadClass(className)
+}
+ 
