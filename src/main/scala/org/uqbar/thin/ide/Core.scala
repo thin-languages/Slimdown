@@ -8,18 +8,13 @@ import java.net.URL
 import java.net.URLClassLoader
 import scala.reflect.internal.util.ScalaClassLoader.URLClassLoader
 import java.io.File
-
-
+import scala.util.Try
+import scala.util.Success
+import scala.util.Failure
 
 object Core extends App{
   
-  implicit class JarClass(entry:JarEntry){
-    val (className,typeSuffix) = {
-      val entryName = entry.getName.replace('/','.')
-      entryName.splitAt( entryName.lastIndexOf(".class"))
-    }
-    def isClass:Boolean = !entry.isDirectory() && (typeSuffix equals ".class")
-  }
+  implicit def sarlemps:Try[_]=>Option[_] = _.toOption
   
   def executePlugin:Class[_]=>Unit = { x => print(x)
                                   //placeholder
@@ -30,11 +25,8 @@ object Core extends App{
     
   val classes = for{path <- paths
       file <- SourceFinder(path)
-      classLoader = Loader(file)
-      jarContents = new JarFile(file).entries
-      entry<-jarContents
-      if entry.isClass
-      }yield{classLoader.loadClass(entry.className)}
+      loadedClass <- Loader(file).loadedClasses
+      }yield{loadedClass}
  
       classes.foreach{ executePlugin }
 }
@@ -51,10 +43,34 @@ object Loader{
   def apply(file:File) = new Loader(List(file))
 }
 case class Loader(files:Seq[File]){
+  implicit def toJarContent = JarContent
+  
   def addFile(newFile:File) = copy(files = files :+ newFile)
+  
   def addFiles(newFiles:Seq[File]) = copy(files = files ++ newFiles)
-  def fileURLs = files map {_.toURI.toURL}
-  def classLoader = new ScalaClassLoader.URLClassLoader(fileURLs,getClass.getClassLoader)
-  def loadClass(className:String) = classLoader.loadClass(className)
+  
+  lazy val fileURLs = files map {_.toURI.toURL}
+  
+  lazy val classLoader = new ScalaClassLoader.URLClassLoader(fileURLs,getClass.getClassLoader)
+  
+  def loadClass(className:String) = Try(classLoader.loadClass(className))
+  
+  def loadClassesFrom(file:File) = for{entry <- new JarFile(file).entries
+                                       if entry.isClass} yield {loadClass(entry.className)}
+                                       
+  lazy val loadAll = files flatMap {loadClassesFrom}
+  
+  lazy val loadedClasses = for{Success(loadedClass)<-loadAll}yield{loadedClass}
+  
+  lazy val failedClasses = for{Failure(error)<-loadAll
+                          }yield{error}
+  
 }
  
+case class JarContent(entry:JarEntry){
+    val (className,typeSuffix) = {
+      val entryName = entry.getName.replace('/','.')
+      entryName.splitAt( entryName.lastIndexOf(".class"))
+    }
+    def isClass:Boolean = !entry.isDirectory() && (typeSuffix equals ".class")
+} 
