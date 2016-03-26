@@ -12,6 +12,7 @@ class SourceFinderTests extends FlatSpec with Matchers with BeforeAndAfter {
   val file1 = new File(resourcesPath + "/file1.jar");
   val file2 = new File(resourcesPath + "/file2.jar");
   val file3 = new File(resourcesPath + "/file3.jar");
+  file1.getParentFile.mkdirs()// In travis docker src/test/resources doesn't exist because is empty
 
   before {
     file1.createNewFile()
