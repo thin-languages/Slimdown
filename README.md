@@ -2,5 +2,5 @@
 [![Build Status](https://travis-ci.org/thin-languages/Thin-IDE.svg?branch=master)](https://travis-ci.org/thin-languages/Thin-IDE)
 
 
-##Thin-Ide
+##Slimdown
 An Ide for Thin Languages.
