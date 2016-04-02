@@ -7,7 +7,7 @@ import scala.util.Try
 
 class LoaderTests extends FlatSpec with Matchers with OneInstancePerTest {
 
-  val resourcesPath = """src\test\resources\org\\uqbar\thin\ide\"""
+  val resourcesPath = "src\\test\\resources\\org\\uqbar\\thin\\ide\\"
 
   val dummyJar = new File(resourcesPath + "Dummy.jar")
   
