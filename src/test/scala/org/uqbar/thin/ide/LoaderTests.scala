@@ -37,8 +37,8 @@ class LoaderTests extends FlatSpec with Matchers with OneInstancePerTest {
     dummyLoader.failedClasses shouldBe Seq()
   }
   
-  "loadAll from a class with only correct classes" should "be of the same size of loadedClasses" in {
-    dummyLoader.loadAll.size shouldEqual dummyLoader.loadedClasses.size
+  "allClasses from a class with only correct classes" should "be of the same size of loadedClasses" in {
+    dummyLoader.allClasses.size shouldEqual dummyLoader.loadedClasses.size
   }
 
   "Dummy's method returnMe" should "return the same as passed" in {
