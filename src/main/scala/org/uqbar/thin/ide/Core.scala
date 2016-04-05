@@ -39,31 +39,24 @@ object SourceFinder{
   def isLocalDirectory(path:String) = true //placeholder
 }
 
-object Loader{
-  def apply(file:File) = new Loader(List(file))
-}
-case class Loader(files:Seq[File]){
+case class Loader(file:File){
   implicit def toJarContent = JarContent
   
-  def addFile(newFile:File) = copy(files = files :+ newFile)
+  lazy val fileURL = file.toURI.toURL
   
-  def addFiles(newFiles:Seq[File]) = copy(files = files ++ newFiles)
-  
-  lazy val fileURLs = files map {_.toURI.toURL}
-  
-  lazy val classLoader = new ScalaClassLoader.URLClassLoader(fileURLs,getClass.getClassLoader)
+  lazy val classLoader = new ScalaClassLoader.URLClassLoader(List(fileURL),getClass.getClassLoader)
   
   def loadClass(className:String) = Try(classLoader.loadClass(className))
   
-  def loadClassesFrom(file:File) = for{entry <- new JarFile(file).entries
-                                       if entry.isClass} yield {loadClass(entry.className)}
-                                       
-  lazy val loadAll = files flatMap {loadClassesFrom}
+  lazy val allClasses = (for{entry <- new JarFile(file).entries.toList
+                             if entry isClass
+                             } yield {loadClass(entry.className)})
   
-  lazy val loadedClasses = for{Success(loadedClass)<-loadAll}yield{loadedClass}
+  lazy val loadedClasses = for{Success(loadedClass)<-allClasses
+                                       }yield{loadedClass}
   
-  lazy val failedClasses = for{Failure(error)<-loadAll
-                          }yield{error}
+  lazy val failedClasses = for{Failure(error)<-allClasses
+                                       }yield{error}
   
 }
  
