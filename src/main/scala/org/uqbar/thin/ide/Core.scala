@@ -14,7 +14,7 @@ import scala.util.Failure
 
 object Core extends App{
   
-  implicit def sarlemps:Try[_]=>Option[_] = _.toOption
+//  implicit def sarlemps:Try[_]=>Option[_] = _.toOption
   
   def executePlugin:Class[_]=>Unit = { x => print(x)
                                   //placeholder

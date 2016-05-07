@@ -9,3 +9,4 @@ target
 .tmpBin
 *.sc
 META-INF/
+.cache-tests
