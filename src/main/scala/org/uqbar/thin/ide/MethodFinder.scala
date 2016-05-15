@@ -32,11 +32,7 @@ object MethodFinder {
     
     def methods:Methods = classSymbol.toType.members.toList.filter(_.isMethod).map(_.asMethod)
     
-    def method(methodName:String) = getType.member(TermName(methodName)) match {
-      case NoSymbol => None
-      case noMethod if !noMethod.isMethod => None
-      case method => Some(method.asMethod)
-    }
+    def method(methodName:String) = methods.find(_.name.encodedName.toString equals methodName) 
     
     def hookedMethods:(Type*)=>Methods = methods.hookedMethods
     
