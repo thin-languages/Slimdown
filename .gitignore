@@ -10,3 +10,4 @@ target
 *.sc
 META-INF/
 .cache-tests
+src/test/resources/**/*.jar

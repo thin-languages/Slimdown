@@ -1,6 +1,4 @@
-
-
-package org.uqbar.thin.ide
+package plugins.dummy
 
 class Dummy {
   def returnMe(any:Any) = any
