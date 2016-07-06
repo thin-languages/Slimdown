@@ -43,6 +43,7 @@ class CoreTest extends FreeSpec with Matchers with BeforeAndAfterAll {
 
 			Process(Seq(
 				"sbt",
+				"-sbt-create",
 				"-Dsbt.log.noformat=true",
 				"--error",
 				s""";set scalaVersion := "$scalaVersion"""",
